@@ -26,7 +26,7 @@ We follow Agile methodologies, with work divided into two-week sprints.
 ~ Logan McFarland
 ~ Samira 
 ~ Adrian
-~ Anthony
+~ Anthony Marino
 ~ Bryan Martinez
 ~ Rolando Martinez
 
