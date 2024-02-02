@@ -25,7 +25,7 @@ We follow Agile methodologies, with work divided into two-week sprints.
 ## Authors
 ~ Logan McFarland
 ~ Samira Kazma Masri
-~ Adrian
+~ Adrian Marcano
 ~ Anthony Marino
 ~ Bryan Martinez
 ~ Rolando Martinez
