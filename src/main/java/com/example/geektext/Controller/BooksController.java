@@ -18,4 +18,10 @@ public class BooksController {
     public List<Books> getBooksByGenre(@PathVariable String genre) {
         return bookService.getBooksByGenre(genre);
     }
+
+    @GetMapping("/books/{bookId}/averageRating")
+    public double getBookAverageRating(@PathVariable String bookId) {
+        return bookService.getAverageRating(bookId);
+    }
+
 }
