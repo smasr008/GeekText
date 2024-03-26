@@ -1,8 +1,7 @@
-package Entity;
+package com.example.geektext.Entity;
 import jakarta.persistence.*;
-import Entity.User;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
