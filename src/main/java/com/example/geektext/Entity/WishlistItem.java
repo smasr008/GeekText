@@ -1,8 +1,6 @@
-package Entity;
+package com.example.geektext.Entity;
 
 import jakarta.persistence.*;
-import Entity.Books;
-import java.awt.print.Book;
 
 @Entity
 @Table(name = "wishlistitems")

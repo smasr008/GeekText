@@ -1,7 +1,6 @@
-package Repository;
+package com.example.geektext.Repository;
 
-import jakarta.persistence.Entity;
-import Entity.User;
+import com.example.geektext.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

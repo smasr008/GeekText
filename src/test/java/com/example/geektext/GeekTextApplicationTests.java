@@ -1,22 +1,22 @@
 package com.example.geektext;
-import Entity.User;
-import Entity.Wishlist;
-import Repository.WishlistRepo;
-import Repository.UserRepo;
-import Repository.WishlistItemRepo;
-import Service.WishlistService;
-import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.example.geektext.Entity.User;
+import com.example.geektext.Entity.Wishlist;
+import com.example.geektext.Repository.UserRepo;
+import com.example.geektext.Repository.WishlistRepo;
+import com.example.geektext.Service.WishlistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import org.springframework.stereotype.Service;
+
 @SpringBootTest
 class GeekTextApplicationTests {
 
@@ -31,49 +31,49 @@ class GeekTextApplicationTests {
 
     @Test
     void testCreateWishlist() {
-        String userId = "testUserId";
+        String userID = "testUserId";
         User user = new User();
-        user.setUserID(userId);
+        user.setUserID(userID); // Correct method to set user ID
         Wishlist wishlist = new Wishlist();
         wishlist.setName("My Wishlist");
 
-        when(userRepo.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepo.findById(userID)).thenReturn(Optional.of(user));
         when(wishlistRepo.save(any(Wishlist.class))).thenReturn(wishlist);
 
-        Wishlist createdWishlist = wishlistService.createWishlist(userId, "My Wishlist");
+        Wishlist createdWishlist = wishlistService.createWishlist(userID, "My Wishlist");
 
         assertThat(createdWishlist).isNotNull();
         assertThat(createdWishlist.getName()).isEqualTo("My Wishlist");
-        verify(userRepo).findById(userId);
+        verify(userRepo).findById(userID);
         verify(wishlistRepo).save(any(Wishlist.class));
     }
 
     @Test
     void testUpdateWishlist() {
-        Long wishId = 1L;
+        Long wishID = 1L;
         String newName = "Updated Wishlist";
         Wishlist existingWishlist = new Wishlist();
-        existingWishlist.setWishId(wishId);
+        existingWishlist.setWishId(wishID); // Correct method to set wishlist ID
         existingWishlist.setName("Original Wishlist");
 
-        when(wishlistRepo.findById(wishId)).thenReturn(Optional.of(existingWishlist));
+        when(wishlistRepo.findById(wishID)).thenReturn(Optional.of(existingWishlist));
         when(wishlistRepo.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Optional<Wishlist> updatedWishlist = wishlistService.updateWishlist(wishId, newName);
+        Optional<Wishlist> updatedWishlist = wishlistService.updateWishlist(wishID, newName);
 
         assertThat(updatedWishlist).isPresent();
         assertThat(updatedWishlist.get().getName()).isEqualTo(newName);
-        verify(wishlistRepo).findById(wishId);
+        verify(wishlistRepo).findById(wishID);
         verify(wishlistRepo).save(any(Wishlist.class));
     }
 
     @Test
     void testDeleteWishlist() {
-        Long wishId = 1L;
-        doNothing().when(wishlistRepo).deleteById(wishId);
+        Long wishID = 1L;
+        doNothing().when(wishlistRepo).deleteById(wishID);
 
-        wishlistService.deleteWishlist(wishId);
+        wishlistService.deleteWishlist(wishID);
 
-        verify(wishlistRepo).deleteById(wishId);
+        verify(wishlistRepo).deleteById(wishID);
     }
 }
