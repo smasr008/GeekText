@@ -1,39 +1,55 @@
 package com.example.geektext.Entity;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 
 @Entity
-@Table(name = "authors")
+@Table(name = "Authors")
 public class Author {
 
-    public Author(String AuthorID, String FirstName, String LastName){
-        this.AuthorID = AuthorID;
-        this.FirstName = FirstName;
-        this.LastName = LastName;
-    }
-
-    public Author(){
-    }
-
     @Id
-    @Column(name = "AuthorID")
-    private String AuthorID;
+    @Column(name = "AuthorID", length = 8)
+    private String authorId;
 
-    @Column(name = "FirstName")
-    private String FirstName;
+    @Column(name = "FirstName", length = 16)
+    private String firstName;
 
-    @Column(name = "LastName")
-    private String LastName;
+    @Column(name = "LastName", length = 16)
+    private String lastName;
 
-    public String getAuthorID(){
-        return this.AuthorID;
+    public Author() {
     }
 
-    public String getFirstName(){
-        return this.FirstName;
+    public Author(String authorId, String firstName, String lastName) {
+        this.authorId = authorId;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public String getLastName(){
-        return this.LastName;
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
