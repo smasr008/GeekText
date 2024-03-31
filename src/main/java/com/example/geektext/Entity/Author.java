@@ -15,12 +15,12 @@ public class Author {
     public Author(){
     }
 
+    @Column(name = "FirstName")
+    private String FirstName;
+
     @Id
     @Column(name = "AuthorID")
     private String AuthorID;
-
-    @Column(name = "FirstName")
-    private String FirstName;
 
     @Column(name = "LastName")
     private String LastName;

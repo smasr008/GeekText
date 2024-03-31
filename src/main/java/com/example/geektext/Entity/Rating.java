@@ -16,11 +16,11 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "rating")
-    private int Rating;
-
     @Column(name = "timestamp")
     private Date timestamp;
+
+    @Column(name = "rating")
+    private int Rating;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

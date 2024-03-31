@@ -9,3 +9,5 @@ public interface RatingRepo<Rating> extends JpaRepository<Rating, Long> {
         return null;
     }
 }
+
+// Add more features here

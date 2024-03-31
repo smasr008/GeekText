@@ -19,10 +19,10 @@ public class Comment {
     private Long userId;
 
     @Column(nullable = false)
-    private Long bookId;
+    private LocalDateTime datestamp;
 
     @Column(nullable = false)
-    private LocalDateTime datestamp;
+    private Long bookId;
 
     // Default constructor for JPA
     public Comment() {}
