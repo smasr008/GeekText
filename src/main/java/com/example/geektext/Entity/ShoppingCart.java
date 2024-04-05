@@ -26,7 +26,7 @@ public class ShoppingCart {
     @Column(name = "Quantity", nullable = false)
     long quantity = 1;
 
-    public ShoppingCart() {
+    public ShoppingCart(User user, Books book) {
     }
 
     public ShoppingCart(User user, Book book) {

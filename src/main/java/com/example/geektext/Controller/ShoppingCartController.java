@@ -34,7 +34,7 @@ public class ShoppingCartController {
         User user = userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
         ));
-        Book book = bookRepo.findById(isbn).orElseThrow(() -> new ResponseStatusException(
+        Books book = bookRepo.findById(isbn).orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
         ));
 

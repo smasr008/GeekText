@@ -1,6 +1,5 @@
 package com.example.geektext.Repository;
 
-import com.example.geektext.Entity.Book;
 import com.example.geektext.Entity.ShoppingCart;
 import com.example.geektext.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ShoppingCartRepo extends JpaRepository<ShoppingCart, Long> {
 
-    ShoppingCart findByUserAndBook(User user, Book book);
+    ShoppingCart findByUserAndBook(User user, Books book);
 
     List<ShoppingCart> findByUser(User user);
 
