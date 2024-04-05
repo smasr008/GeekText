@@ -6,8 +6,8 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @Table(name = "ratings")
 public class Rating {
@@ -16,19 +16,19 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "rating")
-    private int Rating;
-
     @Column(name = "timestamp")
     private Date timestamp;
 
+    @Column(name = "rating")
+    private int rating; // Changed 'Rating' to 'rating' to follow naming conventions
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id") // Ensure this matches your User entity's ID
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Books book;
+    @JoinColumn(name = "book_id", referencedColumnName = "isbn") // Ensure this matches your Book entity's ID
+    private Book book;
 
-    // Constructors, getters, and setters
+    // Lombok will handle constructors, getters, and setters
 }
