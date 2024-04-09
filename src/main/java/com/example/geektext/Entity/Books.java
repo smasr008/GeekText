@@ -18,12 +18,19 @@ public class Books {
 
     @Column(name = "AuthorID")
     private String AuthorID;
-
+    @Column(name = "Genre")
+    private String genre;
     // Constructors, getters, and setters
 
     public Books() {
     }
+    public String getGenre() {
+        return genre;
+    }
 
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
     public String getISBN() {
         return ISBN;
     }
@@ -35,6 +42,7 @@ public class Books {
     public String getBookName() {
         return BookName;
     }
+
 
     public void setBookName(String bookName) {
         this.BookName = bookName;
