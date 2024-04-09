@@ -9,20 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShoppingCartRepo extends JpaRepository<ShoppingCart, Long> {
 
-    ShoppingCart findByUserAndBook(User user, Book book);
+    Optional<ShoppingCart> findByUserAndBook(User user, Book book);
 
     List<ShoppingCart> findByUser(User user);
 
-    @Query(
-        value = "SELECT SUM(Books.Price * ShoppingCart.Quantity) " +
-                "FROM ShoppingCart INNER JOIN Books " +
-                "ON  ShoppingCart.ISBN = Books.ISBN " +
-                "WHERE ShoppingCart.UserID = :userId",
-        nativeQuery = true
-    )
-    double subtotal(@Param("userId") String userId);
+    @Query("SELECT COALESCE(SUM(sc.quantity * b.price), 0) FROM ShoppingCart sc JOIN sc.book b WHERE sc.user.userID = :userId")
+    Double subtotal(@Param("userId") String userId);
 }

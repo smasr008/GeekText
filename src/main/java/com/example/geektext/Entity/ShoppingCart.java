@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-
 @Entity
-@Table(name = "ShoppingCart", uniqueConstraints = {@UniqueConstraint(name = "UniqueCartItem", columnNames = { "UserID", "ISBN" })})
+@Table(name = "ShoppingCart", uniqueConstraints = {@UniqueConstraint(name = "UniqueCartItem", columnNames = {"UserID", "ISBN"})})
 public class ShoppingCart {
 
     @Id
@@ -16,23 +15,27 @@ public class ShoppingCart {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    User user;
+    private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "ISBN", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    Book book;
+    private Book book;
 
     @Column(name = "Quantity", nullable = false)
-    long quantity = 1;
+    private long quantity = 1;
 
+    // No-arg constructor
     public ShoppingCart() {
     }
 
+    // Constructor with parameters
     public ShoppingCart(User user, Book book) {
         this.user = user;
         this.book = book;
     }
+
+    // Getters and setters
 
     public Long getCartId() {
         return cartId;

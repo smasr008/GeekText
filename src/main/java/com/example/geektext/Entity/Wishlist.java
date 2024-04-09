@@ -1,4 +1,7 @@
 package com.example.geektext.Entity;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -6,12 +9,13 @@ import java.util.Set;
 
 @Entity
 @Table(name = "wishlists")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "wishID")
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long WishID;
+    private Long wishID;
 
-    private String name; // Added field for the name of the wishlist
+    private String name; // Field for the name of the wishlist
 
     @ManyToOne
     @JoinColumn(name = "UserID", referencedColumnName = "UserID")
@@ -23,19 +27,19 @@ public class Wishlist {
     public Wishlist() {}
 
     // Getters and Setters
-    public Long getWishId() {
-        return WishID;
+    public Long getWishID() {
+        return wishID;
     }
 
-    public void setWishId(Long wishId) {
-        this.WishID = wishId;
+    public void setWishID(Long wishID) {
+        this.wishID = wishID;
     }
 
-    public String getName() { // Getter for name
+    public String getName() {
         return name;
     }
 
-    public void setName(String name) { // Setter for name
+    public void setName(String name) {
         this.name = name;
     }
 

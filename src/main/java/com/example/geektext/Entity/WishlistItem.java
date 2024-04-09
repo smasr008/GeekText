@@ -15,7 +15,7 @@ public class WishlistItem {
 
     @ManyToOne
     @JoinColumn(name = "ISBN")
-    private Books book; // Ensure this is pointing to your Books entity
+    private Book book; // Ensure this is pointing to your Books entity
 
     public WishlistItem() {}
 
@@ -36,11 +36,11 @@ public class WishlistItem {
         this.wishlist = wishlist;
     }
 
-    public Books getBook() {
+    public Book getBook() {
         return book;
     }
 
-    public void setBook(Books book) {
+    public void setBook(Book book) {
         this.book = book;
     }
 }

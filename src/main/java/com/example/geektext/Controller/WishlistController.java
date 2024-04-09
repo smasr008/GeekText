@@ -1,4 +1,5 @@
 package com.example.geektext.Controller;
+
 import java.util.Optional;
 import java.util.Map;
 import java.util.HashMap;
@@ -11,7 +12,6 @@ import com.example.geektext.Service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/wishlist")
@@ -33,10 +33,10 @@ public class WishlistController {
                     List<Map<String, Object>> books = wishlist.getItems().stream()
                             .map(item -> {
                                 Map<String, Object> bookDetails = new HashMap<>();
-                                bookDetails.put("isbn", item.getBook().getISBN());
+                                bookDetails.put("isbn", item.getBook().getIsbn());
                                 bookDetails.put("bookName", item.getBook().getBookName());
                                 bookDetails.put("genre", item.getBook().getGenre());
-                                bookDetails.put("authorID", item.getBook().getAuthorID());
+                                bookDetails.put("author", item.getBook().getAuthor().getFirstName() + " " + item.getBook().getAuthor().getLastName());
                                 return bookDetails;
                             })
                             .collect(Collectors.toList());
@@ -71,6 +71,12 @@ public class WishlistController {
     @DeleteMapping("/removeBook/{wishlistItemId}")
     public ResponseEntity<Void> removeBookFromWishlist(@PathVariable Long wishlistItemId) {
         wishlistService.removeBookFromWishlist(wishlistItemId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{userId}/transferToCart/{wishlistItemId}")
+    public ResponseEntity<?> transferBookToCart(@PathVariable String userId, @PathVariable Long wishlistItemId) {
+        wishlistService.transferBookFromWishlistToCart(wishlistItemId, userId);
         return ResponseEntity.ok().build();
     }
 }

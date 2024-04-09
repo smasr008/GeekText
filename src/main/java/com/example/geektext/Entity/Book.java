@@ -3,10 +3,13 @@ package com.example.geektext.Entity;
 import jakarta.persistence.*;
 
 import java.util.Set;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Books")
+@Table(name = "books")
 public class Book {
 
     @Id

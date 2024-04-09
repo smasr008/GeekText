@@ -1,5 +1,6 @@
 package com.example.geektext.Controller;
-
+import java.util.Optional;
+import java.util.List;
 import com.example.geektext.Entity.Book;
 import com.example.geektext.Entity.ShoppingCart;
 import com.example.geektext.Entity.User;
@@ -12,10 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 @RestController
 @RequestMapping("/api/cart")
 public class ShoppingCartController {
@@ -27,84 +24,50 @@ public class ShoppingCartController {
     private BookRepo bookRepo;
 
     @Autowired
-    ShoppingCartRepo shoppingCartRepo;
+    private ShoppingCartRepo shoppingCartRepo;
 
     @PostMapping("/add/{userId}/{isbn}")
-    public ResponseEntity<String> addToCart(@PathVariable String userId, @PathVariable String isbn) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
-        ));
-        Book book = bookRepo.findById(isbn).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
-        ));
+    public ResponseEntity<?> addToCart(@PathVariable String userId, @PathVariable String isbn) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Book book = bookRepo.findById(isbn)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
 
-        ShoppingCart item = shoppingCartRepo.findByUserAndBook(user, book);
-        if (item == null) {
-            shoppingCartRepo.save(new ShoppingCart(user, book));
+        ShoppingCart existingItem = shoppingCartRepo.findByUserAndBook(user, book).orElse(null);
+        if (existingItem == null) {
+            ShoppingCart newItem = new ShoppingCart(user, book);
+            shoppingCartRepo.save(newItem);
+            return ResponseEntity.ok(newItem);
         } else {
-            item.incrementQuantity(1);
-            shoppingCartRepo.save(item);
+            existingItem.incrementQuantity(1);
+            shoppingCartRepo.save(existingItem);
+            return ResponseEntity.ok(existingItem);
         }
-
-        return ResponseEntity.ok("");
     }
 
-    @DeleteMapping("/del/{userId}/{isbn}")
-    public ResponseEntity<String> delFromCart(@PathVariable String userId, @PathVariable String isbn) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
-        ));
-        Book book = bookRepo.findById(isbn).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("Either user: %s or book with ISBN: %s not found", userId, isbn)
-        ));
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> listCart(@PathVariable String userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        ShoppingCart item = shoppingCartRepo.findByUserAndBook(user, book);
-        if (item == null) {
-             throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                String.format("No such item in the shopping cart: userId: %s, ISBN: %s ", userId, isbn)
-            );
+        List<ShoppingCart> cartItems = shoppingCartRepo.findByUser(user);
+        if (cartItems.isEmpty()) {
+            return ResponseEntity.ok("Shopping cart is empty");
         }
+        return ResponseEntity.ok(cartItems);
+    }
 
-        item.decrementQuantity(1);
-        if (item.getQuantity() <= 0) {
+    @DeleteMapping("/remove/{cartItemId}")
+    public ResponseEntity<?> removeFromCart(@PathVariable Long cartItemId) {
+        ShoppingCart item = shoppingCartRepo.findById(cartItemId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found"));
+
+        if (item.getQuantity() > 1) {
+            item.decrementQuantity(1);
+            shoppingCartRepo.save(item);
+        } else {
             shoppingCartRepo.delete(item);
-        } else {
-            shoppingCartRepo.save(item);
         }
-
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/get/{userId}")
-    public List<ShoppingCartResult> listCart(@PathVariable("userId") String userId)
-    {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("User not found: %s", userId)
-        ));
-        List<ShoppingCartResult> results = new ArrayList<>();
-
-        List<ShoppingCart> items = shoppingCartRepo.findByUser(user);
-        if (items.isEmpty()) {
-            return results;
-        }
-
-        for (ShoppingCart item: items) {
-            Book book = item.getBook();
-            results.add(new ShoppingCartResult(book.getIsbn(), book.getBookName(), book.getPrice(), item.getQuantity()));
-        }
-
-        return results;
-    }
-
-    @GetMapping("/subtotal/{userId}")
-    public double getSubtotal(@PathVariable("userId") String userId)
-    {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, String.format("User not found: %s", userId)
-        ));
-        return shoppingCartRepo.subtotal(user.getUserId());
-    }
-
 }
-
