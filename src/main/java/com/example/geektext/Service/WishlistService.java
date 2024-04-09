@@ -1,8 +1,15 @@
 package com.example.geektext.Service;
 
+import com.example.geektext.Entity.Book;
+import com.example.geektext.Entity.User;
 import com.example.geektext.Entity.Wishlist;
+import com.example.geektext.Entity.WishlistItem;
+import com.example.geektext.Repository.BookRepo;
+import com.example.geektext.Repository.ShoppingCartRepo;
 import com.example.geektext.Repository.UserRepo;
+import com.example.geektext.Repository.WishlistItemRepo;
 import com.example.geektext.Repository.WishlistRepo;
+import com.example.geektext.Entity.ShoppingCart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,31 +20,32 @@ import java.util.Optional;
 @Service
 public class WishlistService {
 
-    private final WishlistRepo wishlistRepo;
-    private final UserRepo userRepo;
+    @Autowired
+    private WishlistRepo wishlistRepo;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private BookRepo bookRepo;
+    @Autowired
+    private WishlistItemRepo wishlistItemRepo;
+    @Autowired
+    private ShoppingCartRepo shoppingCartRepo;
 
-    public WishlistService(WishlistRepo wishlistRepo, UserRepo userRepo) {
-        this.wishlistRepo = wishlistRepo;
-        this.userRepo = userRepo;
-    }
     @Transactional
-    public Wishlist createWishlist(String UserID, String wishlistName) {
-        if (UserID == null || UserID.trim().isEmpty() || wishlistName == null || wishlistName.trim().isEmpty()) {
-            throw new IllegalArgumentException("User ID and Wishlist Name must not be empty");
-        }
-
-        return userRepo.findById(UserID)
-                .map(user -> {
-                    Wishlist wishlist = new Wishlist();
-                    wishlist.setName(wishlistName);
-                    wishlist.setUser(user);
-                    return wishlistRepo.save(wishlist);
-                })
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + UserID));
+    public Wishlist createWishlist(String userID, String wishlistName) {
+        User user = userRepo.findById(userID).orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
+        Wishlist wishlist = new Wishlist();
+        wishlist.setName(wishlistName);
+        wishlist.setUser(user);
+        return wishlistRepo.save(wishlist);
     }
 
-    public List<Wishlist> findAllByUserId(String UserID) {
-        return wishlistRepo.findAllByUserId(UserID);
+    public List<Wishlist> findAllByUserId(String userID) {
+        return wishlistRepo.findAllByUserId(userID);
+    }
+
+    public Optional<Wishlist> findWishlistById(Long wishId) {
+        return wishlistRepo.findById(wishId);
     }
 
     @Transactional
@@ -45,12 +53,58 @@ public class WishlistService {
         return wishlistRepo.findById(wishID)
                 .map(wishlist -> {
                     wishlist.setName(newName);
-                    return Optional.of(wishlistRepo.save(wishlist));
-                })
-                .orElse(Optional.empty());
+                    return wishlistRepo.save(wishlist);
+                });
     }
 
     public void deleteWishlist(Long wishID) {
         wishlistRepo.deleteById(wishID);
+    }
+
+    @Transactional
+    public WishlistItem addBookToWishlist(Long wishlistId, String isbn) {
+        Wishlist wishlist = wishlistRepo.findById(wishlistId)
+                .orElseThrow(() -> new RuntimeException("Wishlist not found with ID: " + wishlistId));
+        Book book = bookRepo.findByIsbn(isbn)
+                .orElseThrow(() -> new RuntimeException("Book not found with ISBN: " + isbn));
+
+        WishlistItem wishlistItem = new WishlistItem();
+        wishlistItem.setWishlist(wishlist);
+        wishlistItem.setBook(book);
+        return wishlistItemRepo.save(wishlistItem);
+    }
+
+    @Transactional
+    public void removeBookFromWishlist(Long wishlistItemId) {
+        if (!wishlistItemRepo.existsById(wishlistItemId)) {
+            throw new RuntimeException("WishlistItem not found with ID: " + wishlistItemId);
+        }
+        wishlistItemRepo.deleteById(wishlistItemId);
+    }
+
+    @Transactional
+    public void transferBookFromWishlistToCart(Long wishlistItemId, String userId) {
+        WishlistItem wishlistItem = wishlistItemRepo.findById(wishlistItemId)
+                .orElseThrow(() -> new IllegalStateException("Wishlist item not found"));
+
+        // Ensuring the wishlist item belongs to the user
+        if (!wishlistItem.getWishlist().getUser().getUserID().equals(userId)) {
+            throw new IllegalStateException("Wishlist item does not belong to the user");
+        }
+
+        // Check if the book is already in the cart
+        ShoppingCart existingCartItem = shoppingCartRepo.findByUserAndBook(wishlistItem.getWishlist().getUser(), wishlistItem.getBook())
+                .orElse(null);
+
+        if (existingCartItem == null) {
+            ShoppingCart newItem = new ShoppingCart(wishlistItem.getWishlist().getUser(), wishlistItem.getBook());
+            shoppingCartRepo.save(newItem);
+        } else {
+            existingCartItem.incrementQuantity(1);
+            shoppingCartRepo.save(existingCartItem);
+        }
+
+        // Remove the item from the wishlist
+        wishlistItemRepo.delete(wishlistItem);
     }
 }

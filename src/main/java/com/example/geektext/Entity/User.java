@@ -1,70 +1,57 @@
 package com.example.geektext.Entity;
 
-import jakarta.persistence.*;
-
-import java.util.Set;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class User {
-
     @Id
-    @Column(name = "UserID", length = 8)
-    private String userId;
+    @Column(name = "UserID")
+    private String userID;
 
-    @Column(name = "Username", length = 32, unique = true)
-    private String userName;
+    @Column(name = "Username")
+    private String username;
 
-    @Column(name = "PW", length = 32)
-    private String password;
+    @Column(name = "PW")
+    private String pw;
 
-    @Column(name = "FullName", length = 32)
+    @Column(name = "FullName")
     private String fullName;
 
-    @Column(name = "EmailAddress", length = 32)
-    private String email;
+    @Column(name = "EmailAddress")
+    private String emailAddress;
 
-    @Column(name = "HomeAddress", length = 32)
-    private String home;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<ShoppingCart> cart;
+    @Column(name = "HomeAddress")
+    private String homeAddress;
 
     public User() {
     }
 
-    public User(String userId, String userName, String password, String fullName, String email, String home) {
-        this.userId = userId;
-        this.userName = userName;
-        this.password = password;
-        this.fullName = fullName;
-        this.email = email;
-        this.home = home;
+    public String getUserID() {
+        return userID;
     }
 
-    public String getUserId() {
-        return userId;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public String getUsername() {
+        return username;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getPw() {
+        return pw;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPw(String pw) {
+        this.pw = pw;
     }
 
     public String getFullName() {
@@ -75,23 +62,19 @@ public class User {
         this.fullName = fullName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
-    public String getHome() {
-        return home;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setHome(String home) {
-        this.home = home;
-    }
-
-    public Set<ShoppingCart> getCart() {
-        return cart;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }
